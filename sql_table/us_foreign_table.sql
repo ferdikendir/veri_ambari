@@ -1,0 +1,21 @@
+USE [frpp_public]
+GO
+
+/****** Object:  Table [dbo].[USForeign]    Script Date: 21.05.2022 20:22:46 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[USForeign](
+	[us_foreign_id] [int] IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+	[us_foreign_name] [nvarchar](50) NULL,
+ CONSTRAINT [PK_USForeign] PRIMARY KEY CLUSTERED 
+(
+	[us_foreign_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
