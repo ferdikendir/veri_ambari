@@ -62,3 +62,4 @@ _city_obj.separateData()
 
 #---- State ----
 _state_obj = _state.State(frpp_public["State Code"], frpp_public["State Name"], conn)
+#_state_obj.separateData()
