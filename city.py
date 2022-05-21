@@ -1,5 +1,5 @@
-import _country as _country
-
+import country as _country_
+import pandas as pd
 
 class CityModel:
     def __init__(self, city_code, city_name, zip_code, country_id): 
@@ -19,7 +19,7 @@ class City:
 
     def saveDatabase(self, city_item):
         cursor = self.connection.cursor()
-        city_val = (city_item.city_name, int(city_item.city_code), city_item.zip_code, int(city_item.country_id))
+        city_val = (city_item.city_name, int(city_item.city_code), str(city_item.zip_code), int(city_item.country_id))
         cursor.execute(self.insert_city_query, city_val)
         self.connection.commit()
 
@@ -28,18 +28,18 @@ class City:
         list_temp_4 = []
 
         for index in range(len(self.city_name_column)):
-            if self.city_name_column[index] in list_temp_4 and self.city_code_column[index] in list_temp_4 and self.zip_code_column[index] in list_temp_4:
+            if [self.city_name_column[index], self.city_code_column[index], self.zip_code_column[index]] in list_temp_4:
                 continue
             else: 
-                _country = _country.Country( self.country_code_column[index], self.country_name_column[index])
+                _country_obj = _country_.Country( self.country_code_column[index], self.country_name_column[index], self.connection)
                 list_temp_4.append([self.city_name_column[index], self.city_code_column[index], self.zip_code_column[index]])
-                city_list.append(CityModel(self.city_code_column[index], self.city_name_column[index], self.zip_code_column[index] , _country.getCountryId()))
-                del _country
+                country_id = _country_obj.getCountryId(self.country_name_column[index], self.country_code_column[index])
+                city_list.append(CityModel(self.city_code_column[index], self.city_name_column[index], self.zip_code_column[index] , int(country_id)))
+                del country_id
         for city_item in city_list:
             if(pd.isna(city_item.city_name)):
                 city_item.city_name = "null"
 
             if(pd.isna(city_item.city_code)):
                 city_item.city_code = 0
-
             self.saveDatabase(city_item)

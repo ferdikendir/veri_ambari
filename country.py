@@ -11,9 +11,9 @@ class Country:
         self.code_colum = code_colum
         self.connection = connection
 
-    def getCountryId(self):
+    def getCountryId(self, country_name, country_code):
         cursor = self.connection.cursor() 
-        cursor.execute("select country_id from Country where country_name=? and country_code=?", self.country_name, int(self.country_code) )
+        cursor.execute("select country_id from Country where country_name=? and country_code=?", country_name, int(country_code) )
         response = cursor.fetchall()
         self.connection.commit()
         return response[0][0] if response != [] else response
