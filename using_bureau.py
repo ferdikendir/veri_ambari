@@ -1,21 +1,39 @@
 import pandas as pd
+import pyodbc
 
 class UsingBureauModel:
     def __init__(self, bureau_name, bureau_code):
         self.bureau_code = bureau_code
         self.bureau_name = bureau_name
 
+
 class UsingBureau:
-    insert_using_bureau_query = "insert into UsingBureau (using_bureau_name, using_bureau_code) values (?,?)"
+    create_table_sql = '''
+        CREATE TABLE UsingBureaus (
+            bureau_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+            bureau_code nvarchar(50),
+            bureau_name nvarchar(50)
+            )
+            '''
+    table_name = 'UsingBureaus'
+    insert_bureau_query = "insert into UsingBureaus (bureau_code, bureau_name) values (?, ?)"
+    get_bureau_by_id = "select bureau_id from UsingBureaus where bureau_code=? and bureau_name=?"
+
+    def createTable(self):
+        cursor = self.connection.cursor()
+        cursor.execute(self.create_table_sql)
+        self.connection.commit()
+
     def __init__(self, bureau_code_column, bureau_name_column, connection):
         self.bureau_name_column = bureau_name_column
         self.bureau_code_column = bureau_code_column
         self.connection = connection
+        ##self.createTable()
 
     def saveDatabase(self, using_bureau_item):
         using_bureau_val = (using_bureau_item.bureau_name, int(using_bureau_item.bureau_code))
         cursor = self.connection.cursor()
-        cursor.execute(self.insert_using_bureau_query, using_bureau_val)
+        cursor.execute(self.insert_bureau_query, using_bureau_val)
         self.connection.commit()
 
     def separateData(self):

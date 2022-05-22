@@ -1,19 +1,37 @@
 import pandas as pd
+import pyodbc
 class CountyModel:
     def __init__(self, county_name, county_code):
         self.county_name = county_name
         self.county_code = county_code
 
+
 class County:
-    insert_county_query = "insert into County (county_name, county_code) values (?,?)"
+    def createTable(self):
+        cursor = self.connection.cursor()
+        cursor.execute(self.create_table_sql)
+        self.connection.commit()
+
+    create_table_sql = '''
+            CREATE TABLE Counties (
+                county_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+                county_name nvarchar(50),
+                county_code nvarchar(50)
+                )
+                '''
+    table_name = 'Counties'
+    insert_county_query = "insert into Counties (county_name, county_code) values (?, ?)"
+    get_county_by_id = "select county_id from Counties where county_name=? and county_code=?"
+
     def __init__(self, county_code_column, county_name_column, connection):
         self.county_code_column = county_code_column
         self.county_name_column = county_name_column
         self.connection = connection
+        #self.createTable()
 
     def saveDatabase(self, county_item):
-        cursor = self.connection.cursor()
         county_val = (county_item.county_name, int(county_item.county_code))
+        cursor = self.connection.cursor()
         cursor.execute(self.insert_county_query, county_val)
         self.connection.commit()
 

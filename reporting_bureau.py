@@ -3,18 +3,33 @@ class ReportingBureauModel:
         self.bureau_code = bureau_code 
         self.bureau_name = bureau_name
 
-
 class ReportingBureau:
-    insert_reporting_bureau_query = "insert into ReportingBureau (reporting_bureau_name, reporting_bureau_code) values (?,?)"
-    def __init__(self, bureau_code_column, bureau_name_column, connection): 
+    def createTable(self):
+        cursor = self.connection.cursor()
+        cursor.execute(self.create_table_sql)
+        self.connection.commit()
+
+    create_table_sql = '''
+        CREATE TABLE ReportingBureaus (
+            bureau_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+            bureau_code nvarchar(50),
+            bureau_name nvarchar(50)
+            )
+            '''
+    table_name = "ReportingBureaus"
+    insert_bureau_query = "insert into ReportingBureaus (bureau_name, bureau_code) values (?, ?)"
+    get_bureau_by_id = "select bureau_id from ReportingBureaus where bureau_code=? and bureau_name=?"
+
+    def __init__(self, bureau_code_column, bureau_name_column, connection):
         self.bureau_code_column = bureau_code_column 
         self.bureau_name_column = bureau_name_column
         self.connection = connection
+        #self.createTable()
 
     def saveDatabase(self, reporting_bureau_item):
-        cursor = self.connection.cursor()
         bureau_val = (reporting_bureau_item.bureau_name, int(reporting_bureau_item.bureau_code))
-        cursor.execute(self.insert_reporting_bureau_query, bureau_val)
+        cursor = self.connection.cursor()
+        cursor.execute(self.insert_bureau_query, bureau_val)
         self.connection.commit()
     
     def separateData(self):

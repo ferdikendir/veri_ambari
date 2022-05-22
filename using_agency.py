@@ -1,21 +1,39 @@
 
 import pandas as pd
+import pyodbc
 class UsingAgencyModel: 
     def __init__(self, using_agency_code, using_agency_name): 
         self.using_agency_code = using_agency_code 
         self.using_agency_name = using_agency_name
-        
+
 class UsingAgency:
-    insert_using_agency_query = "insert into UsingAgency (using_agency_name, using_agency_code) values (?,?)"
+    def createTable(self):
+        cursor = self.connection.cursor()
+        cursor.execute(self.create_table_sql)
+        self.connection.commit()
+
+    create_table_sql = '''
+            CREATE TABLE UsingAgencies (
+                using_agency_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+                using_agency_code nvarchar(50),
+                using_agency_name nvarchar(50)
+                )
+                '''
+    table_name = 'UsingAgencies'
+    insert_using_agency_query = "insert into UsingAgencies (using_agency_code, using_agency_name) values (?, ?)"
+    get_using_agency_by_id = "select using_agency_id from UsingAgencies where using_agency_code=? and using_agency_name=?"
+
+    
     
     def __init__(self, agency_code_column, agency_name_column, connection):
         self.agency_code_column = agency_code_column
         self.agency_name_column = agency_name_column
         self.connection = connection
+        ##self.createTable()
 
     def saveDatabase(self, using_agency_item):
-        cursor = self.connection.cursor()
         agency_val = (using_agency_item.using_agency_name, int(using_agency_item.using_agency_code))
+        cursor = self.connection.cursor()
         cursor.execute(self.insert_using_agency_query, agency_val)
         self.connection.commit()
 

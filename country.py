@@ -1,26 +1,42 @@
 import pandas as pd
+import pyodbc
 class CountryModel:
     def __init__(self, country_name, country_code):
         self.country_name = country_name
         self.country_code = country_code
 
 class Country:
-    insert_country_query = "insert into Country (country_name, country_code) values (?,?)"
+    def createTable(self):
+        cursor = self.connection.cursor()
+        cursor.execute(self.create_table_sql)
+        self.connection.commit()
+
+    create_table_sql = '''
+            CREATE TABLE Countries (
+                country_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+                country_name nvarchar(50),
+                country_code nvarchar(50)
+                )
+                '''
+    table_name = 'Countries'
+    insert_country_query = "insert into Countries (country_name, country_code) values (?, ?)"
+    get_country_by_id = "select country_id from Countries where country_name=? and country_code=?"
+
     def __init__(self, code_colum, name_column, connection):
         self.name_column = name_column
         self.code_colum = code_colum
         self.connection = connection
+        #self.createTable()
 
     def getCountryId(self, country_name, country_code):
-        cursor = self.connection.cursor() 
-        cursor.execute("select country_id from Country where country_name=? and country_code=?", country_name, int(country_code) )
-        response = cursor.fetchall()
-        self.connection.commit()
-        return response[0][0] if response != [] else response
-
-    def saveDatabase(self, country_item):
         cursor = self.connection.cursor()
+        cursor.execute(self.get_country_by_id, (country_name, int(country_code)))
+        row = cursor.fetchone()
+        return row[0]
+
+    def saveDatabase(self, country_item):   
         bureau_val = (country_item.country_name, int(country_item.country_code))
+        cursor = self.connection.cursor()
         cursor.execute(self.insert_country_query, bureau_val)
         self.connection.commit()
 

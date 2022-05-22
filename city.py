@@ -7,8 +7,27 @@ class CityModel:
         self.city_name = city_name
         self.zip_code = zip_code
         self.country_id = country_id
+
 class City:
-    insert_city_query = "insert into City (city_name, city_code, zip_code, country_id) values (?,?,?,?)"
+    def createTable(self):
+        cursor = self.connection.cursor()
+        cursor.execute(self.create_table_sql)
+        self.connection.commit()
+
+    create_table_sql = '''
+            CREATE TABLE Cities (
+                city_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+                city_name nvarchar(50),
+                city_code nvarchar(50),
+                zip_code nvarchar(50),
+                country_id int FOREIGN KEY REFERENCES Countries(country_id)
+                )
+                '''
+    table_name = 'Cities'
+    insert_city_query = "insert into Cities (city_name, city_code, zip_code, country_id) values (?,?,?,?)"
+    get_city_by_id = "select city_id from Cities where city_name=? and city_code=? and zip_code=? and country_id=?"
+
+    
     def __init__(self, city_code_column, city_name_column, zip_code_column, country_name_column, country_code_column, connection): 
         self.city_code_column = city_code_column 
         self.city_name_column = city_name_column
@@ -16,14 +35,15 @@ class City:
         self.country_name_column = country_name_column
         self.country_code_column = country_code_column
         self.connection = connection
+        #self.createTable()
 
     def saveDatabase(self, city_item):
-        cursor = self.connection.cursor()
         city_val = (city_item.city_name, int(city_item.city_code), str(city_item.zip_code), int(city_item.country_id))
+        cursor = self.connection.cursor()
         cursor.execute(self.insert_city_query, city_val)
         self.connection.commit()
 
-    def separateData(self):
+    def separateData(self, country):
         city_list = []
         list_temp_4 = []
 
@@ -31,9 +51,8 @@ class City:
             if [self.city_name_column[index], self.city_code_column[index], self.zip_code_column[index]] in list_temp_4:
                 continue
             else: 
-                _country_obj = _country_.Country( self.country_code_column[index], self.country_name_column[index], self.connection)
                 list_temp_4.append([self.city_name_column[index], self.city_code_column[index], self.zip_code_column[index]])
-                country_id = _country_obj.getCountryId(self.country_name_column[index], self.country_code_column[index])
+                country_id = country.getCountryId(self.country_name_column[index], self.country_code_column[index])
                 city_list.append(CityModel(self.city_code_column[index], self.city_name_column[index], self.zip_code_column[index] , int(country_id)))
                 del country_id
         for city_item in city_list:
