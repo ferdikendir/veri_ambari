@@ -13,25 +13,27 @@ class Country:
 
     create_table_sql = '''
             CREATE TABLE Countries (
-                country_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+                country_id int primary key AUTO_INCREMENT NOT NULL,
                 country_name nvarchar(50),
                 country_code nvarchar(50)
-                )
+                );
                 '''
     table_name = 'Countries'
-    insert_country_query = "insert into Countries (country_name, country_code) values (?, ?)"
-    get_country_by_id = "select country_id from Countries where country_name=? and country_code=?"
+    insert_country_query = "insert into Countries (country_name, country_code) values (%s, %s)"
+    get_country_by_id = "select country_id from Countries where country_name=%s and country_code=%s"
 
-    def __init__(self, code_colum, name_column, connection):
+    def __init__(self, code_column, name_column, connection):
         self.name_column = name_column
-        self.code_colum = code_colum
+        self.code_column = code_column
         self.connection = connection
-        #self.createTable()
+        self.createTable()
 
     def getCountryId(self, country_name, country_code):
         cursor = self.connection.cursor()
         cursor.execute(self.get_country_by_id, (country_name, int(country_code)))
         row = cursor.fetchone()
+        if row is None:
+            return 0
         return row[0]
 
     def saveDatabase(self, country_item):   
@@ -43,7 +45,7 @@ class Country:
     def separateData(self):
         country_list = []
         country_names = self.name_column.unique()
-        country_codes = self.code_colum.unique()
+        country_codes = self.code_column.unique()
         for i in range(len(country_names)):
             country_list.append(CountryModel(country_names[i], country_codes[i]))
         for country_item in country_list:

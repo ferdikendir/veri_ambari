@@ -11,26 +11,34 @@ class ReportingBureau:
 
     create_table_sql = '''
         CREATE TABLE ReportingBureaus (
-            bureau_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+            bureau_id int primary key AUTO_INCREMENT NOT NULL,
             bureau_code nvarchar(50),
             bureau_name nvarchar(50)
-            )
+            );
             '''
     table_name = "ReportingBureaus"
-    insert_bureau_query = "insert into ReportingBureaus (bureau_name, bureau_code) values (?, ?)"
-    get_bureau_by_id = "select bureau_id from ReportingBureaus where bureau_code=? and bureau_name=?"
+    insert_bureau_query = "insert into ReportingBureaus (bureau_name, bureau_code) values (%s, %s)"
+    get_bureau_by_id = "select bureau_id from ReportingBureaus where bureau_code=%s and bureau_name=%s"
 
     def __init__(self, bureau_code_column, bureau_name_column, connection):
         self.bureau_code_column = bureau_code_column 
         self.bureau_name_column = bureau_name_column
         self.connection = connection
-        #self.createTable()
+        self.createTable()
 
     def saveDatabase(self, reporting_bureau_item):
         bureau_val = (reporting_bureau_item.bureau_name, int(reporting_bureau_item.bureau_code))
         cursor = self.connection.cursor()
         cursor.execute(self.insert_bureau_query, bureau_val)
         self.connection.commit()
+
+    def getReportingBureauId(self, bureau_code, bureau_name):
+        cursor = self.connection.cursor()
+        cursor.execute(self.get_bureau_by_id, (int(bureau_code), bureau_name))
+        bureau_id = cursor.fetchone()
+        if bureau_id is None:
+            return 0
+        return bureau_id[0]
     
     def separateData(self):
         reporting_bureau_list = []

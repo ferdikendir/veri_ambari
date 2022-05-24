@@ -8,16 +8,15 @@ class UsingBureauModel:
 
 
 class UsingBureau:
-    create_table_sql = '''
-        CREATE TABLE UsingBureaus (
-            bureau_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+    create_table_sql = '''        CREATE TABLE UsingBureaus (
+            bureau_id int primary key AUTO_INCREMENT NOT NULL,
             bureau_code nvarchar(50),
             bureau_name nvarchar(50)
-            )
+            );
             '''
     table_name = 'UsingBureaus'
-    insert_bureau_query = "insert into UsingBureaus (bureau_code, bureau_name) values (?, ?)"
-    get_bureau_by_id = "select bureau_id from UsingBureaus where bureau_code=? and bureau_name=?"
+    insert_bureau_query = "insert into UsingBureaus (bureau_code, bureau_name) values (%s, %s)"
+    get_bureau_by_id = "select bureau_id from UsingBureaus where bureau_code=%s and bureau_name=%s"
 
     def createTable(self):
         cursor = self.connection.cursor()
@@ -28,10 +27,18 @@ class UsingBureau:
         self.bureau_name_column = bureau_name_column
         self.bureau_code_column = bureau_code_column
         self.connection = connection
-        ##self.createTable()
+        self.createTable()
+
+    def getBureauId(self, bureau_code, bureau_name):
+        cursor = self.connection.cursor()
+        cursor.execute(self.get_bureau_by_id, (str(bureau_code), bureau_name))
+        bureau_id = cursor.fetchone()
+        if bureau_id is None:
+            return 0
+        return bureau_id[0]
 
     def saveDatabase(self, using_bureau_item):
-        using_bureau_val = (using_bureau_item.bureau_name, int(using_bureau_item.bureau_code))
+        using_bureau_val = (using_bureau_item.bureau_name, str(using_bureau_item.bureau_code))
         cursor = self.connection.cursor()
         cursor.execute(self.insert_bureau_query, using_bureau_val)
         self.connection.commit()

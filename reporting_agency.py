@@ -11,21 +11,25 @@ class ReportingAgency:
         self.connection.commit()
         
     create_table_sql = '''
-        CREATE TABLE ReportingAgencies (
-            agency_id int primary key IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
-            agency_code nvarchar(50),
-            agency_name nvarchar(50)
-            )
+    CREATE TABLE ReportingAgencies ( agency_id int primary key AUTO_INCREMENT NOT NULL, agency_code varchar(50), agency_name varchar(50) )
             '''
-    insert_agency_query = "insert into ReportingAgencies (agency_code, agency_name) values (?, ?)"
-    get_agency_by_id = "select agency_id from ReportingAgencies where agency_code=? and agency_name=?"
+    insert_agency_query = "insert into ReportingAgencies (agency_code, agency_name) values (%s, %s)"
+    get_agency_by_id = "select agency_id from ReportingAgencies where agency_code=%s and agency_name=%s"
 
     
     def __init__(self, agency_code_column, agency_name_column, connection):
         self.agency_code_column = agency_code_column 
         self.agency_name_column = agency_name_column
         self.connection = connection
-        #self.createTable()
+        self.createTable()
+
+    def getReportingAgencyId(self, agency_code, agency_name):
+        cursor = self.connection.cursor()
+        cursor.execute(self.get_agency_by_id, (int(agency_code), agency_name))
+        agency_id = cursor.fetchone()
+        if agency_id is None:
+            return 0
+        return agency_id[0]
 
     def saveDatabase(self, reporting_agency_item):
         agency_val = (reporting_agency_item.agency_name, int(reporting_agency_item.agency_code))
