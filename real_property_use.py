@@ -9,19 +9,19 @@ class RealPropertyUse:
         cursor.execute(self.create_table_sql)
         self.connection.commit()
     create_table_sql = '''        CREATE TABLE RealPropertyUses (
-            real_property_use_id int primary key AUTO_INCREMENT NOT NULL,
+            real_property_use_id int primary key IDENTITY NOT NULL,
             name nvarchar(250),
             code nvarchar(250)
             );
             '''
     table_name = "RealPropertyUses"
-    insert_real_property_use_query = "insert into RealPropertyUses (name, code) values (%s, %s)"
-    get_real_property_use_by_id = "select real_property_use_id from RealPropertyUses where name=%s and code=%s"
+    insert_real_property_use_query = "insert into RealPropertyUses (name, code) values (?, ?)"
+    get_real_property_use_by_id = "select real_property_use_id from RealPropertyUses where name=? and code=?"
     def __init__(self, name_column, code_column, connection):
         self.name_column = name_column
         self.code_column = code_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getRealPropertyUseId(self, name, code):    
         cursor = self.connection.cursor()

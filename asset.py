@@ -10,20 +10,20 @@ class Asset:
         self.connection.commit()
 
     create_table_sql = '''      CREATE TABLE Assets (
-            asset_id int primary key AUTO_INCREMENT NOT NULL,
+            asset_id int primary key IDENTITY NOT NULL,
             asset_status nvarchar(250),
             asset_status_code nvarchar(250)
             );
             '''
     table_name = "Assets"
-    insert_asset_query = "insert into Assets (asset_status, asset_status_code) values (%s, %s)"
-    get_asset_by_id = "select asset_id from Assets where asset_status=%s and asset_status_code=%s"
+    insert_asset_query = "insert into Assets (asset_status, asset_status_code) values (?, ?)"
+    get_asset_by_id = "select asset_id from Assets where asset_status=? and asset_status_code=?"
 
     def __init__(self, asset_status_column, asset_status_code_column, connection):
         self.asset_status_column = asset_status_column
         self.asset_status_code_column = asset_status_code_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getAssetId(self, asset_status, asset_status_code):
         cursor = self.connection.cursor()

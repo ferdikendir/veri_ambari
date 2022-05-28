@@ -13,20 +13,20 @@ class Country:
 
     create_table_sql = '''
             CREATE TABLE Countries (
-                country_id int primary key AUTO_INCREMENT NOT NULL,
+                country_id int primary key IDENTITY NOT NULL,
                 country_name nvarchar(50),
                 country_code nvarchar(50)
                 );
                 '''
     table_name = 'Countries'
-    insert_country_query = "insert into Countries (country_name, country_code) values (%s, %s)"
-    get_country_by_id = "select country_id from Countries where country_name=%s and country_code=%s"
+    insert_country_query = "insert into Countries (country_name, country_code) values (?, ?)"
+    get_country_by_id = "select country_id from Countries where country_name=? and country_code=?"
 
     def __init__(self, code_column, name_column, connection):
         self.name_column = name_column
         self.code_column = code_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getCountryId(self, country_name, country_code):
         cursor = self.connection.cursor()

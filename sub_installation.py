@@ -8,19 +8,19 @@ class SubInstallation:
         cursor.execute(self.create_table_sql)
         self.connection.commit()
 
-    create_table_sql = '''        CREATE TABLE SubInstallations (
-            sub_installation_id int primary key AUTO_INCREMENT NOT NULL,
+    create_table_sql = '''           CREATE TABLE SubInstallations (
+            sub_installation_id int primary key IDENTITY NOT NULL,
             sub_installation_code nvarchar(50)
             );
             '''
     table_name = "SubInstallations"
-    insert_sub_installation_query = "insert into SubInstallations (sub_installation_code) values (%s)"
-    get_sub_installation_by_id = "select sub_installation_id from SubInstallations where sub_installation_code=%s"
+    insert_sub_installation_query = "insert into SubInstallations (sub_installation_code) values (?)"
+    get_sub_installation_by_id = "select sub_installation_id from SubInstallations where sub_installation_code=?"
 
     def __init__(self, sub_installation_code_column, connection):
         self.sub_installation_code_column = sub_installation_code_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getSubInstallationId(self, sub_installation):
         cursor = self.connection.cursor()

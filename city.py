@@ -16,17 +16,17 @@ class City:
 
     create_table_sql = '''
             CREATE TABLE Cities (
-                city_id int primary key AUTO_INCREMENT NOT NULL,
-                city_name varchar(50),
-                city_code varchar(50),
-                zip_code varchar(50),
+                city_id int primary key IDENTITY NOT NULL,
+                city_name nvarchar(50),
+                city_code nvarchar(50),
+                zip_code nvarchar(50),
                 country_id int,
                 FOREIGN KEY (country_id) REFERENCES Countries(country_id)
                 )
                 '''
     table_name = 'Cities'
-    insert_city_query = "insert into Cities (city_name, city_code, zip_code, country_id) values (%s,%s,%s,%s)"
-    get_city_by_id = "select city_id from Cities where city_name=%s and city_code=%s and zip_code=%s and country_id=%s"
+    insert_city_query = "insert into Cities (city_name, city_code, zip_code, country_id) values (?,?,?,?)"
+    get_city_by_id = "select city_id from Cities where city_name=? and city_code=? and zip_code=? and country_id=?"
 
     
     def __init__(self, city_code_column, city_name_column, zip_code_column, country_name_column, country_code_column, connection): 
@@ -36,7 +36,7 @@ class City:
         self.country_name_column = country_name_column
         self.country_code_column = country_code_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getCityId(self, city_name, city_code, zip_code, country_id):
         cursor = self.connection.cursor()

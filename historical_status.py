@@ -4,23 +4,23 @@ class HistoricalStatus:
         cursor.execute(self.create_table_sql)
         self.connection.commit()
 
-    create_table_sql = '''      CREATE TABLE HistoricalStatuses (
-            historical_status_id int primary key AUTO_INCREMENT NOT NULL,
+    create_table_sql = '''        CREATE TABLE HistoricalStatuses (
+            historical_status_id int primary key IDENTITY NOT NULL,
             historical_status nvarchar(250)
             );
             '''
     table_name = "HistoricalStatuses"
-    insert_historical_status_query = "insert into HistoricalStatuses (historical_status) values (%s)"
-    get_historical_status_by_id = "select historical_status_id from HistoricalStatuses where historical_status=%s"
+    insert_historical_status_query = "insert into HistoricalStatuses (historical_status) values (?)"
+    get_historical_status_by_id = "select historical_status_id from HistoricalStatuses where historical_status=?"
 
     def __init__(self, historical_status_column, connection):
         self.historical_status_column = historical_status_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getHistoricalStatusId(self, historical_status):
         cursor = self.connection.cursor()
-        cursor.execute(self.get_historical_status_by_id, (historical_status,))
+        cursor.execute(self.get_historical_status_by_id, str(historical_status))
         historical_status_id = cursor.fetchone()
         return historical_status_id[0]
 

@@ -11,24 +11,24 @@ class Installation:
         self.connection.commit()
 
     create_table_sql = '''        CREATE TABLE Installations (
-            installation_id int primary key AUTO_INCREMENT NOT NULL,
+            installation_id int primary key IDENTITY NOT NULL,
             installation_name nvarchar(250),
             installation_code nvarchar(250)
             );
             '''
     table_name = "Installations"
-    insert_installation_query = "insert into Installations (installation_name, installation_code) values (%s, %s)"
-    get_installation_by_id = "select installation_id from Installations where installation_code=%s and installation_name=%s"
+    insert_installation_query = "insert into Installations (installation_name, installation_code) values (?, ?)"
+    get_installation_by_id = "select installation_id from Installations where installation_code=? and installation_name=?"
 
     def __init__(self, installation_code_column, installation_name_column, connection):
         self.installation_code_column = installation_code_column 
         self.installation_name_column = installation_name_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getInstallationId(self, installation_code, installation_name):
         cursor = self.connection.cursor()
-        cursor.execute(self.get_installation_by_id, (installation_name, f'{installation_code}'))
+        cursor.execute(self.get_installation_by_id, (str(installation_code), str(installation_name)))
         installation_id = cursor.fetchone()
         if installation_id is None:
             return 0

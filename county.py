@@ -13,31 +13,31 @@ class County:
         self.connection.commit()
 
     create_table_sql = '''            CREATE TABLE Counties (
-                county_id int primary key AUTO_INCREMENT NOT NULL,
+                county_id int primary key IDENTITY NOT NULL,
                 county_name nvarchar(50),
                 county_code nvarchar(50)
                 );
                 '''
     table_name = 'Counties'
-    insert_county_query = "insert into Counties (county_name, county_code) values (%s, %s)"
-    get_county_by_id = "select county_id from Counties where county_name=%s and county_code=%s"
+    insert_county_query = "insert into Counties (county_name, county_code) values (?, ?)"
+    get_county_by_id = "select county_id from Counties where county_name=? and county_code=?"
 
     def __init__(self, county_code_column, county_name_column, connection):
         self.county_code_column = county_code_column
         self.county_name_column = county_name_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getCountyId(self, county_name, county_code):
         cursor = self.connection.cursor()
-        cursor.execute(self.get_county_by_id, (county_name, int(county_code)))
+        cursor.execute(self.get_county_by_id, (str(county_name), str(county_code)))
         row = cursor.fetchone()
         if row is None:
             return 0
         return row[0]
 
     def saveDatabase(self, county_item):
-        county_val = (county_item.county_name, int(county_item.county_code))
+        county_val = (county_item.county_name, str(county_item.county_code))
         cursor = self.connection.cursor()
         cursor.execute(self.insert_county_query, county_val)
         self.connection.commit()

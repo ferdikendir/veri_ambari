@@ -12,20 +12,20 @@ class Utilization:
         self.connection.commit()
 
     create_table_sql = '''      CREATE TABLE Utilizations (
-            utilization_id int primary key AUTO_INCREMENT NOT NULL,
+            utilization_id int primary key IDENTITY NOT NULL,
             utilization nvarchar(250),
             utilization_code nvarchar(250)
             );
             '''
     table_name = "Utilizations"
-    insert_utilization_query = "insert into Utilizations (utilization, utilization_code) values (%s, %s)"
-    get_utilization_by_id = "select utilization_id from Utilizations where utilization=%s and utilization_code=%s"
+    insert_utilization_query = "insert into Utilizations (utilization, utilization_code) values (?, ?)"
+    get_utilization_by_id = "select utilization_id from Utilizations where utilization=? and utilization_code=?"
 
     def __init__(self, utilization_column, utilization_code_column, connection):
         self.utilization_column = utilization_column
         self.utilization_code_column = utilization_code_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getUtilizationId(self, utilization, utilization_code):
         cursor = self.connection.cursor()

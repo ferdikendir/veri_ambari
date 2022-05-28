@@ -10,20 +10,20 @@ class RealPropertyType:
         self.connection.commit()
 
     create_table_sql = '''        CREATE TABLE RealPropertyTypes (
-            real_property_type_id int primary key AUTO_INCREMENT NOT NULL,
+            real_property_type_id int primary key IDENTITY NOT NULL,
             real_property_code nvarchar(250),
             real_property_name nvarchar(250)
             );
             '''
     table_name = "RealPropertyTypes"
-    insert_real_property_type_query = "insert into RealPropertyTypes (real_property_code, real_property_name) values (%s, %s)"
-    get_real_property_type_by_id = "select real_property_type_id from RealPropertyTypes where real_property_code=%s and real_property_name=%s"
+    insert_real_property_type_query = "insert into RealPropertyTypes (real_property_code, real_property_name) values (?, ?)"
+    get_real_property_type_by_id = "select real_property_type_id from RealPropertyTypes where real_property_code=? and real_property_name=?"
 
     def __init__(self, real_property_code_column, real_property_name_column, connection):
         self.real_property_code_column = real_property_code_column
         self.real_property_name_column = real_property_name_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getRealPropertyTypeId(self, real_property_code, real_property_name):    
         cursor = self.connection.cursor()

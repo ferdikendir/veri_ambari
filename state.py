@@ -11,32 +11,32 @@ class State:
         cursor.execute(self.create_table_sql)
         self.connection.commit()
     create_table_sql = '''            CREATE TABLE States (
-                state_id int primary key AUTO_INCREMENT NOT NULL,
+                state_id int primary key IDENTITY NOT NULL,
                 state_name nvarchar(50),
                 state_code nvarchar(50)
                 );
                 '''
     table_name = 'States'
-    insert_state_query = "insert into States (state_name, state_code) values (%s, %s)"
-    get_state_by_id = "select state_id from States where state_name=%s and state_code=%s"
+    insert_state_query = "insert into States (state_name, state_code) values (?, ?)"
+    get_state_by_id = "select state_id from States where state_name=? and state_code=?"
 
 
     def __init__(self, state_code_column, state_name_column, connection):
         self.state_code_column = state_code_column
         self.state_name_column = state_name_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getStateId(self, state_name, state_code):
         cursor = self.connection.cursor()
-        cursor.execute(self.get_state_by_id, (state_name, state_code))
+        cursor.execute(self.get_state_by_id, (state_name, str(state_code)))
         row = cursor.fetchone()
         if row is None:
             return 0
         return row[0]
 
     def saveDatabase(self, state_item):
-        state_val = (state_item.state_name, int(state_item.state_code))
+        state_val = (state_item.state_name, str(state_item.state_code))
         cursor = self.connection.cursor()
         cursor.execute(self.insert_state_query, state_val)
         self.connection.commit()

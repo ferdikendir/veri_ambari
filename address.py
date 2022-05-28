@@ -38,8 +38,8 @@ class Address:
 
     create_table_sql = '''
             CREATE TABLE Addresses (
-            address_id int primary key AUTO_INCREMENT NOT NULL,
-            street_address longtext,
+            address_id int primary key IDENTITY NOT NULL,
+            street_address nvarchar(max),
             city_id int,
             state_id int,
             country_id int,
@@ -52,8 +52,8 @@ class Address:
             using_bureau_id int,
             real_property_id int,
             real_property_type_id int,
-            latitude float,
-            longitude float,
+            latitude nvarchar(50),
+            longitude nvarchar(50),
             legal_interest_id int,
             utilization_id int,
             asset_id int,
@@ -61,13 +61,13 @@ class Address:
             )
             '''
     alter_table_sql = 'alter table Addresses'
-    insert_address_query = '''INSERT INTO `addresses`(`street_address`, `city_id`, `state_id`, `country_id`, 
-    `county_id`, `us_foreign_id`, `installation_id`, `reporting_agency_id`, 
-    `reporting_bureau_id`, `using_agency_id`, `using_bureau_id`, `real_property_id`, `real_property_type_id`,
-    `latitude`, `longitude`, `legal_interest_id`, `utilization_id`, `asset_id`, `historical_id`)
-     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+    insert_address_query = '''INSERT INTO  addresses( street_address ,  city_id ,  state_id ,  country_id , 
+     county_id ,  us_foreign_id ,  installation_id ,  reporting_agency_id , 
+     reporting_bureau_id ,  using_agency_id ,  using_bureau_id ,  real_property_id ,  real_property_type_id ,
+     latitude ,  longitude ,  legal_interest_id ,  utilization_id ,  asset_id ,  historical_id )
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
 
-    get_address_by_id = "select address_id from Addresses where street_address=%s and city_id=%s and state_id=%s and country_id=%s and county_id=%s and us_foreign_id=%s and installation_id=%s and sub_installation_id=%s and reporting_agency_id=%s and reporting_bureau_id=%s and using_agency_id=%s and using_bureau_id=%s and real_property_id=%s and real_property_type_id=%s"
+    get_address_by_id = "select address_id from Addresses where street_address=? and city_id=? and state_id=? and country_id=? and county_id=? and us_foreign_id=? and installation_id=? and sub_installation_id=? and reporting_agency_id=? and reporting_bureau_id=? and using_agency_id=? and using_bureau_id=? and real_property_id=? and real_property_type_id=?"
 
     def __init__(self, street_address_column, latitude_column, longitude_column, connection):
         self.street_address_column = street_address_column
@@ -104,7 +104,8 @@ class Address:
     def separateData(self, city, state, country, county, us_foreign, installation, sub_installation,
     reporting_agency, reporting_bureau, using_agency, using_bureau, real_property,
     real_property_type, legal_interest_obj, utilization_obj, asset_obj, historical_obj):
-        for index in range(len(self.street_address_column)):
+        for i in range(len( self.street_address_column)):
+            index =  i
             _country = country.getCountryId(
                 country.name_column[index], country.code_column[index])
             _state = state.getStateId(
@@ -112,7 +113,7 @@ class Address:
             _city = city.getCityId(
                 city.city_name_column[index], city.city_code_column[index], city.zip_code_column[index], _country)
             _county = county.getCountyId(
-                county.county_name_column[index], county.county_code_column[index])
+                county.county_name_column[index], str(county.county_code_column[index]))
             _us_foreign = us_foreign.getUSForeignId(
                 us_foreign.us_forign_name[index])
             _installation = installation.getInstallationId(

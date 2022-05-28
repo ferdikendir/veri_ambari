@@ -13,14 +13,14 @@ class UsingAgency:
         self.connection.commit()
 
     create_table_sql = '''            CREATE TABLE UsingAgencies (
-                using_agency_id int primary key AUTO_INCREMENT NOT NULL,
+                using_agency_id int primary key IDENTITY NOT NULL,
                 using_agency_code nvarchar(50),
                 using_agency_name nvarchar(50)
                 );
                 '''
     table_name = 'UsingAgencies'
-    insert_using_agency_query = "insert into UsingAgencies (using_agency_code, using_agency_name) values (%s, %s)"
-    get_using_agency_by_id = "select using_agency_id from UsingAgencies where using_agency_code=%s and using_agency_name=%s"
+    insert_using_agency_query = "insert into UsingAgencies (using_agency_name, using_agency_code) values (?, ?)"
+    get_using_agency_by_id = "select using_agency_id from UsingAgencies where using_agency_code=? and using_agency_name=?"
 
     
     
@@ -28,7 +28,7 @@ class UsingAgency:
         self.agency_code_column = agency_code_column
         self.agency_name_column = agency_name_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getUsingAgencyId(self, using_agency_code, using_agency_name):
         cursor = self.connection.cursor()

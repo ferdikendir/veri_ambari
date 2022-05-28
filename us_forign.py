@@ -9,19 +9,19 @@ class USForeign:
         cursor.execute(self.create_table_sql)
         self.connection.commit()
 
-    create_table_sql = '''          CREATE TABLE US_Foreigns (
-                us_foreign_id int primary key AUTO_INCREMENT NOT NULL,
+    create_table_sql = '''           CREATE TABLE US_Foreigns (
+                us_foreign_id int primary key IDENTITY NOT NULL,
                 us_foreign_name nvarchar(50)
                 );
                 '''
     table_name = 'USForeigns'
-    insert_us_forign_query = "insert into US_Foreigns (us_foreign_name) values (%s)"
-    get_us_forign_by_id = "select us_foreign_id from US_Foreigns where us_foreign_name=%s"
+    insert_us_forign_query = "insert into US_Foreigns (us_foreign_name) values (?)"
+    get_us_forign_by_id = "select us_foreign_id from US_Foreigns where us_foreign_name=?"
 
     def __init__(self, us_forign_name, connection):
         self.us_forign_name = us_forign_name
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getUSForeignId(self, us_foreign_name):
         cursor = self.connection.cursor()

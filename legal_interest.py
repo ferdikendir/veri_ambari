@@ -10,20 +10,20 @@ class LegalInterest:
         self.connection.commit()
 
     create_table_sql = '''      CREATE TABLE LegalInterests (
-            legal_interest_id int primary key AUTO_INCREMENT NOT NULL,
+            legal_interest_id int primary key IDENTITY NOT NULL,
             name nvarchar(250),
             code nvarchar(250)
             );
             '''
     table_name = "LegalInterests"
-    insert_legal_interest_query = "insert into LegalInterests (name, code) values (%s, %s)"
-    get_legal_interest_by_id = "select legal_interest_id from LegalInterests where name=%s and code=%s"
+    insert_legal_interest_query = "insert into LegalInterests (name, code) values (?, ?)"
+    get_legal_interest_by_id = "select legal_interest_id from LegalInterests where name=? and code=?"
 
     def __init__(self, name_column, code_column, connection):
         self.name_column = name_column
         self.code_column = code_column
         self.connection = connection
-        self.createTable()
+        #self.createTable()
 
     def getLegalInterestId(self, name, code):
         cursor = self.connection.cursor()
